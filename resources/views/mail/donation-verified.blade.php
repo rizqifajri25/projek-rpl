@@ -1,0 +1,1 @@
+<p>Halo {{ $donation->donor_name }},</p><p>Donasi Anda untuk campaign <strong>{{ $donation->campaign->title }}</strong> telah diverifikasi oleh admin. Terima kasih atas kepedulian Anda untuk Sumatera Selatan.</p>

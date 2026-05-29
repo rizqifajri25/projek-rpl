@@ -1,0 +1,4 @@
+<?php
+namespace App\Http\Requests;
+use Illuminate\Foundation\Http\FormRequest;
+class StoreDonationRequest extends FormRequest { public function authorize(): bool { return true; } public function rules(): array { return ['donor_name'=>['required','string','max:120'],'donor_email'=>['required','email','max:180'],'amount'=>['required','numeric','min:10000','max:500000000'],'message'=>['nullable','string','max:500'],'bank_name'=>['required','string','max:80'],'account_name'=>['required','string','max:120'],'transfer_date'=>['required','date','before_or_equal:today'],'proof'=>['required','file','mimes:jpg,jpeg,png,pdf','max:4096']]; } protected function prepareForValidation(): void { $this->merge(['donor_name'=>strip_tags((string)$this->donor_name),'message'=>strip_tags((string)$this->message)]); } }

@@ -1,0 +1,4 @@
+<?php
+namespace App\Http\Controllers\Admin;
+use App\Http\Controllers\Controller; use App\Http\Requests\VerifyDonationRequest; use App\Models\Donation; use App\Repositories\DonationRepository; use App\Services\CertificateService; use App\Services\DonationService;
+class DonationVerificationController extends Controller { public function __construct(private DonationRepository $repo, private DonationService $service, private CertificateService $certificates) {} public function index() { return view('admin.donations.index',['donations'=>$this->repo->pending()]); } public function verify(VerifyDonationRequest $request, Donation $donation) { $this->service->verify($donation,$request->validated(),$request->user()->id,$request->ip(),$request->userAgent()); if ($request->action === 'approve') $this->certificates->issue($donation->fresh(['campaign','certificate'])); return back()->with('success','Status donasi diperbarui.'); } }
