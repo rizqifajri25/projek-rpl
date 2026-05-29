@@ -1,0 +1,4 @@
+<?php
+namespace App\Http\Controllers;
+use App\Http\Requests\StoreDonationRequest; use App\Models\Campaign; use App\Repositories\CampaignRepository; use App\Services\DonationService; use Illuminate\Http\Request;
+class CampaignController extends Controller { public function __construct(private CampaignRepository $campaigns, private DonationService $donations) {} public function index(Request $request) { return app(HomeController::class)($request); } public function show(string $slug) { return view('campaigns.show',['campaign'=>$this->campaigns->findBySlug($slug)]); } public function donate(StoreDonationRequest $request, Campaign $campaign) { abort_unless($campaign->status === 'active', 403); $this->donations->store($campaign,$request->validated(),$request->user()?->id); return back()->with('success','Donasi diterima. Admin akan memverifikasi bukti transfer Anda.'); } }
