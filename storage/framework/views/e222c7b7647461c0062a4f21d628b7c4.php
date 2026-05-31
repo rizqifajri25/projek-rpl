@@ -1,0 +1,2 @@
+<div class="card"><p class="text-sm text-slate-500"><?php echo e($label); ?></p><p class="mt-2 text-3xl font-bold text-brand-700"><?php echo e($value); ?></p></div>
+<?php /**PATH D:\coding\resources\views/components/stat-card.blade.php ENDPATH**/ ?>

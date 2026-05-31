@@ -1,4 +1,38 @@
 <?php
+
 namespace App\Http\Controllers;
-use App\Models\Campaign; use App\Models\Donation; use App\Models\User;
-class DashboardController extends Controller { public function __invoke() { $user=request()->user(); return match($user->role?->slug){ 'admin'=>view('admin.dashboard',['stats'=>['campaigns'=>Campaign::count(),'donations'=>Donation::where('status','verified')->sum('amount'),'donors'=>User::whereHas('role',fn($q)=>$q->where('slug','donor'))->count(),'active'=>Campaign::where('status','active')->count(),'pendingDonations'=>Donation::where('status','waiting')->count()],'recentDonations'=>Donation::with('campaign')->latest()->limit(5)->get()]), 'fundraiser'=>view('fundraiser.dashboard',['campaigns'=>Campaign::where('fundraiser_id',$user->id)->withCount('donations')->latest()->get()]), default=>view('donor.dashboard',['donations'=>Donation::with(['campaign','certificate'])->where('donor_id',$user->id)->latest()->get()]) }; } }
+
+use App\Models\Campaign;
+use App\Models\Donation;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
+
+class DashboardController extends Controller
+{
+    public function __invoke(): View|RedirectResponse
+    {
+        $user = request()->user();
+
+        // Admin menggunakan dashboard khusus
+        if ($user->isRole('admin')) {
+            return redirect()->route('dashboard');
+        }
+
+        return match ($user->role?->slug) {
+
+            'fundraiser' => view('fundraiser.dashboard', [
+                'campaigns' => Campaign::where('fundraiser_id', $user->id)
+                    ->withCount('donations')
+                    ->latest()
+                    ->get(),
+            ]),
+
+            default => view('donor.dashboard', [
+                'donations' => Donation::with(['campaign', 'certificate'])
+                    ->where('donor_id', $user->id)
+                    ->latest()
+                    ->get(),
+            ]),
+        };
+    }
+}

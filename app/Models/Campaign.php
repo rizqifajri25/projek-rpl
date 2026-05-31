@@ -19,6 +19,21 @@ class Campaign extends Model
     public function verifier(): BelongsTo { return $this->belongsTo(User::class,'verified_by'); }
     public function updates(): HasMany { return $this->hasMany(CampaignUpdate::class); }
     public function donations(): HasMany { return $this->hasMany(Donation::class); }
+    public function image()
+{
+    $images = [
+        'Bantu Seragam Sekolah Anak Banyuasin' => 'seragam.jpg',
+        'Operasi Katarak Lansia Muara Enim' => 'katarak.jpg',
+        'Bantuan Banjir Musi Rawas' => 'banjir.jpg',
+        'Dapur Umum Warga Ogan Ilir' => 'dapur_umum.jpg',
+        'Beasiswa Santri Prabumulih' => 'beasiswa.jpg',
+        'Renovasi Rumah Dhuafa Lahat' => 'renovasi.jpg',
+        'Ambulans Gratis Palembang' => 'ambulans.jpg',
+        'Paket Gizi Anak OKU Timur' => 'gizi.jpg',
+    ];
+
+    return $images[$this->title] ?? 'seragam.jpg';
+}
     public function transparencyReports(): HasMany { return $this->hasMany(TransparencyReport::class); }
     public function verificationLogs(): MorphMany { return $this->morphMany(VerificationLog::class, 'verifiable'); }
     public function progressPercentage(): float { return min(100, $this->target_amount > 0 ? ((float)$this->collected_amount / (float)$this->target_amount) * 100 : 0); }
